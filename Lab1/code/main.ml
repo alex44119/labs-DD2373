@@ -2,10 +2,6 @@
   Main code for the project. For now it is just a tester.
 *)
 
-(**
-  Main code for the project. For now it is just a tester.
-*)
-
 open Utils.Parser
 
 let test (s : string) : unit =
