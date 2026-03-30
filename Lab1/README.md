@@ -12,6 +12,7 @@ The OCaml toplevel, version 5.2.1
 ```bash
 % opam --version
 2.3.0
+% eval $(opam env)
 ```
 
 ```bash
@@ -53,97 +54,6 @@ Et ensuite :
 dune exec ./main.exe
 ```
 
-Voici mon output généré (Si t'as tout pareil c'est que ça fonctionne !):
-```
-input  : ""                         
-raw : Eps
-output : ε
------------------------------
-input  : "a"
-raw : Lit('a')
-output : a
------------------------------
-input  : "ε"
-raw : Eps
-output : ε
------------------------------
-input  : "."
-raw : Any
-output : .
------------------------------
-input  : "ab"
-raw : Concat(Lit('a'), Lit('b'))
-output : ab
------------------------------
-input  : "a|b"
-raw : Or(Lit('a'), Lit('b'))
-output : a|b
------------------------------
-input  : "(a|b)*"
-raw : Star(Or(Lit('a'), Lit('b')))
-output : ((a|b))*
------------------------------
-input  : "a+"
-raw : Concat(Lit('a'), Star(Lit('a')))
-output : aa*
------------------------------
-input  : "a?"
-raw : Or(Lit('a'), Eps)
-output : a|ε
------------------------------
-input  : "a*?"
-raw : Or(Star(Lit('a')), Eps)
-output : a*|ε
------------------------------
-input  : "a+*"
-raw : Star(Concat(Lit('a'), Star(Lit('a'))))
-output : ((aa*))*
------------------------------
-input  : "(ab)?*"
-raw : Star(Or(Concat(Lit('a'), Lit('b')), Eps))
-output : ((ab|ε))*
------------------------------
-input  : "a(b|c)"
-raw : Concat(Lit('a'), Or(Lit('b'), Lit('c')))
-output : a(b|c)
------------------------------
-input  : "ab|c"
-raw : Or(Concat(Lit('a'), Lit('b')), Lit('c'))
-output : ab|c
------------------------------
-input  : "a|bc"
-raw : Or(Lit('a'), Concat(Lit('b'), Lit('c')))
-output : a|bc
------------------------------
-input  : "()"
-raw : empty parentheses are not allowed
-output : Error: empty parentheses are not allowed
------------------------------
-input  : "|"
-raw : expected an expression
-output : Error: expected an expression
------------------------------
-input  : "a|"
-raw : expected an expression after '|'
-output : Error: expected an expression after '|'
------------------------------
-input  : "|a"
-raw : expected an expression
-output : Error: expected an expression
------------------------------
-input  : "*a"
-raw : expected an expression
-output : Error: expected an expression
------------------------------
-input  : "(a"
-raw : missing closing ')'
-output : Error: missing closing ')'
------------------------------
-input  : "a)"
-raw : unexpected ')' at top level
-output : Error: unexpected ')' at top level
------------------------------
-```
 
 ## Comment afficher un shell pour debugger/tester rapidement du ocaml ?
 
@@ -171,3 +81,9 @@ Ou encore tu peux directement exécuter `main.ml` pour mieux débugger :
 ```ocaml
 #use "main.ml";;
 ```
+
+## TODO (avant de continuer)
+
+Changer `state` par `int` et faire en sorte que ce soit toujours un int en utilisant "Z.arith"
+
+Trier bazar.ml dans `utils`

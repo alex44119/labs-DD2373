@@ -4,6 +4,8 @@
   parser : string -> char reg error_option
 
   pretty_printer : char reg error_option -> string
+
+  raw_printer : char reg error_option -> string
 *)
 
 open Reg
