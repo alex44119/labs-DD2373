@@ -54,6 +54,7 @@ let rec eclose (n : nfa) (q : state) : state list =
 
 let nfa_dfa_states (n : nfa) : state list = 
   (* Returns the list of states (each state is a list of states) of the DFA constructed from the NFA n. *)
+  
   let rec aux (to_check : state list) (seen : state list) : state list = 
     match to_check with 
     | [] -> seen
