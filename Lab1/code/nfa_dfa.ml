@@ -1,6 +1,7 @@
 let epsilon = "ε" ;;
 
-type state = Nb of int | Set of state list;; 
+type state = int;; 
+type temporary_state = state list;;
 
 type dfa = 
   {
@@ -9,6 +10,15 @@ type dfa =
     delta : state -> string -> state;
     initial : state;
     final : state list
+  }
+
+  type temporary_dfa = 
+  {
+    states : temporary_state list;
+    alphabet : string list;
+    delta : temporary_state -> string -> temporary_state;
+    initial : temporary_state;
+    final : temporary_state list
   }
   
 type nfa = 
@@ -22,78 +32,18 @@ type nfa =
   
   
 
-
+(* UTILITIES *)
 
 let cmp (a : state) (b : state) : int = 
   (* Compares states to be able to sort the list of states *)
   
   match a,b with
-  | Nb(x),Nb(y) when x = y -> 0
-  | Nb(x),Nb(y) when x < y -> -1
-  | Nb(x),Nb(y) when x > y -> 1
-  | _,_ -> failwith "Error in cmp : thoses states are not int. ";;
+  | _ when a = b -> 0
+  | _ when a < b -> -1
+  | _ -> 1;;
 
 
-
-let rec eclose (n : nfa) (q : state) : state list = 
-  (* We look for the epsilon closure in the NFA N, thus q is an int. 
-     Returns the epsilon closure of q in N, in increasing order. *)
-  
-  let rec aux (to_visit : state list) (visited : state list) =
-    match to_visit with
-    | [] -> visited
-    | x :: xs ->
-        if List.mem x visited then
-          aux xs visited
-        else
-          let eps_moves = n.delta epsilon x in
-          aux (eps_moves @ xs) (x :: visited)
-  in List.sort cmp (aux [q] []);; 
-
-
-
-let nfa_dfa_states (n : nfa) : state list = 
-  (* Returns the list of states (each state is a list of states) of the DFA constructed from the NFA n. *)
-  
-  let rec aux (to_check : state list) (seen : state list) : state list = 
-    match to_check with 
-    | [] -> seen
-    |hd::tl -> let close = Set(eclose n hd) in 
-        if List.mem close seen then 
-          aux tl seen
-        else 
-          aux tl (close :: seen)
-  in aux n.states [];;
-  
-  
-  
-let nfa_dfa_initial (n : nfa) : state = 
-  (* Returns the starting state (as a list of state) of the DFA constructed from the NFA n. 
-     The new starting state is the epsilon closure of the old one. *)
-  
-  Set(eclose n n.initial);;
-
-
-
-let rec is_final (n : nfa) (q : state) : bool = 
-  (* Returns true iff in the state q (represented as a list of states) there is a final state of the NFA n. *)
-  
-  match q with 
-  | Set([]) -> false
-  | Set(x::y) when List.mem x n.final -> true
-  | Set(x::y) -> is_final n (Set(y))
-  | _ -> failwith "Error in is_final : the state is not a list of states. ";;
-
-
-
-let nfa_dfa_final (n : nfa) : state list = 
-  (* Returns the list of final states (each final state is a list of states) of the DFA constructed from the NFA n. *)
-  
-  List.filter (is_final n) (nfa_dfa_states n)
-  
-  
-
-let flatten (l : state list list) : state list = 
+  let flatten (l : state list list) : state list = 
   (* Returns the list of states in the lists in l, without repetition. *)
   
   let rec aux (to_check : state list list) (seen : state list) = 
@@ -109,27 +59,139 @@ let flatten (l : state list list) : state list =
   in List.sort cmp (aux l []);;
 
 
+let rec eclose (n : nfa) (q : state) : temporary_state = 
+  (* Returns the epsilon closure of state q in the NFA N, in increasing order. *)
+  
+  let rec aux (to_visit : state list) (visited : state list) =
+    match to_visit with
+    | [] -> visited
+    | x :: xs ->
+        if List.mem x visited then
+          aux xs visited
+        else
+          let eps_moves = n.delta epsilon x in
+          aux (eps_moves @ xs) (x :: visited)
+  in List.sort cmp (aux [q] []);; 
 
-let nfa_dfa_delta (n : nfa) (q : state) (s : string) : state = 
-  (* Returns the state (as a list of state) that we would end on by following the delta function of the DFA constructed from the NFA n. *)
+  
+let rec is_final (n : nfa) (q : temporary_state) : bool = 
+  (* Returns true iff in the temporary state q  there is a final state of the NFA n. *)
   
   match q with 
-  | Set(l) -> let l_s = flatten (List.map (n.delta s) l) in 
-      let l_eclose = List.map (eclose n) l_s in 
-      Set(flatten l_eclose)
-  | Nb(x) -> failwith "Error in nfa_dfa_delta : the state is not a list of states. ";;
+  | [] -> false
+  | x::y when List.mem x n.final -> true
+  | x::y -> is_final n y;;
 
 
 
-let nfa_dfa (n : nfa) : dfa = 
+
+
+(* NFA TO TEMPORARY DFA *)
+
+let nfa_temp_dfa_initial (n : nfa) : temporary_state = 
+  (* Returns the starting state (as a temporary state) of the DFA constructed from the NFA n. 
+     The new starting state is the epsilon closure of the old one. *)
+  
+  eclose n n.initial;;
+
+
+let nfa_temp_dfa_delta (n : nfa) (q : temporary_state) (s : string) : temporary_state = 
+  (* Returns the state (as a temporary state) that we would end on by following the delta function of the DFA constructed from the NFA n. *)
+  
+  match q with 
+  | [] -> []
+  | _ -> let q_s = flatten (List.map (n.delta s) q) in 
+      let q_eclose = List.map (eclose n) q_s in 
+      flatten q_eclose;;
+
+
+let nfa_temp_dfa_states (n : nfa) : temporary_state list = 
+  (* Returns the list of states (each state is a temporary state) of the DFA constructed from the NFA n. *)
+  let alph = n.alphabet in 
+
+  let rec aux (to_check : temporary_state list) (seen : temporary_state list) : temporary_state list = 
+    match to_check with
+    | [] -> seen
+    | hd::tl when List.mem hd seen -> aux tl seen
+    | hd::tl -> aux ((List.map (nfa_temp_dfa_delta n hd) alph) @ to_check) (hd::seen)
+  in aux [nfa_temp_dfa_initial n] [];;
+
+
+let nfa_temp_dfa_final (n : nfa) : temporary_state list = 
+  (* Returns the list of final states (each final state is a temporary state) of the DFA constructed from the NFA n. *)
+  
+  List.filter (is_final n) (nfa_temp_dfa_states n)
+
+
+let nfa_temp_dfa (n : nfa) : temporary_dfa = 
   (* Returns the DFA constructed from the NFA n. *)
   
   {
-    states = nfa_dfa_states n;
+    states = nfa_temp_dfa_states n;
     alphabet = n.alphabet;
-    delta = nfa_dfa_delta n;
-    initial = nfa_dfa_initial n;
-    final = nfa_dfa_final n
+    delta = nfa_temp_dfa_delta n;
+    initial = nfa_temp_dfa_initial n;
+    final = nfa_temp_dfa_final n
   }
                
-  
+
+
+
+
+(* TEMPORARY DFA TO DFA AFTER RENAMING *)
+
+let maps_dfa (s : state) (states : temporary_state list) : temporary_state = 
+  (* Returns the temporary state corresponding to state s *)
+
+  List.nth states s;;
+
+
+let maps_rev_dfa (t : temporary_state) (states : temporary_state list) : state option = 
+  (* Returns the state corresponding to the temporary state t *)
+
+  let f (q : temporary_state) : bool = List.equal (=) q t in
+  List.find_index f states;;
+
+
+let temp_dfa_dfa_delta (d : temporary_dfa) (q : state) (s : string) : state = 
+  (* Will allow us to create the delta function for the renamed DFA *)
+
+  let t = maps_dfa q d.states in let res = d.delta t s in 
+  match maps_rev_dfa res d.states with
+  | Some i -> i
+  | None -> failwith "Problem when using maps_rev_dfa in temp_dfa_dfa_delta";;
+
+
+let temp_dfa_dfa_initial (d : temporary_dfa) : state = 
+  (* Returns the starting state of the renamed DFA. *)
+
+  match maps_rev_dfa d.initial d.states with 
+  | Some i -> i
+  | None -> failwith "Problem when using maps_rev_dfa in temp_dfa_dfa_initial";;
+
+
+let temp_dfa_dfa_final (d : temporary_dfa) : state list = 
+  (* Returns the final states of the renamed DFA *)
+
+  let rec aux (l : temporary_state list) = 
+    match l with 
+    | [] -> []
+    | hd::tl -> 
+      match maps_rev_dfa hd d.states with 
+      | Some i -> i :: (aux tl)
+      | None -> failwith "Problem when using maps_rev_dfa in temp_dfa_dfa_final"
+    in aux d.final;;
+
+
+let temp_dfa_dfa (d : temporary_dfa) : dfa = 
+  (* Returns the renamed DFA from the temporary DFA d *)
+
+  let f (k : int) = k in 
+
+  {
+    states = List.init (List.length d.states) f;
+    alphabet = d.alphabet;
+    delta = temp_dfa_dfa_delta d ;
+    initial = temp_dfa_dfa_initial d ;
+    final = temp_dfa_dfa_final d
+  };;

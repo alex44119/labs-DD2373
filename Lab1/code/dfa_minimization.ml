@@ -9,6 +9,8 @@ type dfa =
     final : state list
   }
 
+(* je remets les types pour de la clarté mais ça doit supprimer à terme *)
+
 let tab_update_letter (d : dfa) (tab : string array array) (i : state) (j : state) (a : string) = 
   (* Updates the table tab if needed upon reading letter a on states i and j, according to the Table Filling algorithm *)
 
@@ -36,6 +38,8 @@ let tab_init (d : dfa) : string array array =
   Array.make n (Array.make n "")
 
 let array_equal eq a b =
+  (* Useful function to check if two arrays a and b are equal according to the comparative function eq *)
+
   let n = Array.length a in
   n = Array.length b &&
   let rec aux i =
@@ -45,7 +49,7 @@ let array_equal eq a b =
   in aux 0;;
 
 let tab_fil_alg (d : dfa) : string array array = 
-  (* Uses the Table Filling algorithm to create a table tab of equivalence *)
+  (* Uses the Table Filling algorithm to create a table of equivalence tab *)
 
   let tab = tab_init d in
   let tab_former = ref [||] in 
@@ -57,7 +61,9 @@ let tab_fil_alg (d : dfa) : string array array =
   
   tab;;
 
-let equivalence_array (tab : string array array) : state list list = 
+let equivalence_states (tab : string array array) : state list list = 
+  (* Returns the list of all the equivalence classes *)
+
   let n = Array.length tab in
   let check = Array.make n false in 
 
@@ -76,16 +82,60 @@ let equivalence_array (tab : string array array) : state list list =
     | _ -> aux i (j + 1) l
   in aux 0 0 [];;
 
+
+(* The following two functions are mapping functions that are useful to the "renaming" step *)
+
 let maps (s : state) (eq : state list list) : state list = 
+  (* Returns the list of equivalent states that corresponds to the state s *)
+
   List.nth eq s;;
 
 let maps_rev (t : state) (eq : state list list) : state = 
+  (* Returns the number of the equivalence class to which the state t belongs *)
+
   let rec aux (l : state list list) (s : state) = 
     match l with 
     | [] -> failwith "State t is too big, it does not exist"
     | hd::tl when List.mem t hd -> s
     | hd::tl -> aux tl (s + 1)
   in aux eq 0;;
+
+let delta_min (d: dfa) (eq : state list list) (s : state) (str : string) : state = 
+  (* Will allow us to create the delta function for the minimized DFA *)
+
+  let t = maps s eq in let hd = List.hd t in
+  maps_rev (d.delta hd str) eq;;
+
+let initial_min (d : dfa) (eq : state list list) : state = 
+  (* Returns the initial state of the minimized DFA *)
+
+  maps_rev d.initial eq;;
+
+let final_min (d : dfa) (eq : state list list) : state list = 
+  (* Returns the states of the minimized DFA, as a list *)
+  
+  let rec aux (l : state list list) = 
+    match l with 
+    | [] -> []
+    | hd::tl when List.mem (List.hd hd) d.final -> (maps_rev (List.hd hd) eq) :: (aux tl) 
+    | hd::tl -> aux tl
+  in aux eq;;
+
+let dfa_min (d : dfa) : dfa = 
+  (* Returns the minimized dfa *)
+
+  let tab = tab_fil_alg d in 
+  let eq = equivalence_states tab in 
+  let f (k : int) = k in 
+
+  {
+    states = List.init (List.length eq) f;
+    alphabet = d.alphabet;
+    delta = delta_min d eq;
+    initial = initial_min d eq;
+    final = final_min d eq
+  };;
+
 
 
 
