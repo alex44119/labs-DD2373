@@ -2,7 +2,17 @@
 *Searching for a pattern in a text file*
 ---
 
-## Setup Alex
+## Comment exécuter les executables ?
+
+```bash
+dune exec ./main.exe
+```
+
+```bash
+dune exec ./test_parser.exe
+```
+
+## Setup
 
 ```bash
 % ocaml --version
@@ -27,9 +37,11 @@ Extension VSCode : [https://marketplace.visualstudio.com/items?itemName=ocamllab
 ```bash
 % tree code
 code
+├── dfa_minimization.ml
 ├── dune
 ├── dune-project
 ├── main.ml
+├── test_parser.ml
 ├── testcases
 │   ├── testcase1.txt
 │   ├── testcase2.txt
@@ -37,23 +49,13 @@ code
 │   ├── testcase4.txt
 │   └── testcase5.txt
 └── utils
+    ├── alphabet.ml
+    ├── automata.ml
     ├── dune
+    ├── nfa_dfa.ml
     ├── parser.ml
     └── reg.ml
 ```
-
-## Comment exécuter `main.ml` ?
-
-Depuis la racine :
-```bash
-dune build
-```
-
-Et ensuite :
-```bash
-dune exec ./main.exe
-```
-
 
 ## Comment afficher un shell pour debugger/tester rapidement du ocaml ?
 
@@ -82,8 +84,17 @@ Ou encore tu peux directement exécuter `main.ml` pour mieux débugger :
 #use "main.ml";;
 ```
 
-## TODO (avant de continuer)
+## Pour s'y retrouver :
 
-Changer `state` par `int` et faire en sorte que ce soit toujours un int en utilisant "Z.arith"
+### 3.1 Reading and parsing the regular expression
 
-Trier bazar.ml dans `utils`
+- [parser.ml](code/utils/parser.ml)
+- [reg.ml](code/utils/reg.ml)
+
+### 3.2 Construction of the ϵ-NFA
+
+### 3.3 Converting the ϵ-NFA into an equivalent DFA
+
+### 3.4 Minimizing the DFA
+
+### 3.5 Simulating the DFA

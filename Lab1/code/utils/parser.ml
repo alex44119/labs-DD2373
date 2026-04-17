@@ -1,13 +1,14 @@
 (** 
-  Parser implementation and pretty printer
+  parser.ml --- Parser implementation and pretty printer
 
-  parser : string -> char reg error_option
+  parser : string -> letter reg error_option
 
-  pretty_printer : char reg error_option -> string
+  pretty_printer : letter reg error_option -> string
 
-  raw_printer : char reg error_option -> string
+  raw_printer : letter reg error_option -> string
 *)
 
+open Alphabet
 open Reg
 
 (* Some helpers *)
@@ -16,29 +17,24 @@ type 'a error_option =
   | Value of 'a
   | Error of string
 
-let epsilon = "ε"
-
 let is_prefix_at (s : string) (i : int) (prefix : string) : bool =
   let n = String.length s in
   let m = String.length prefix in
   i + m <= n && String.sub s i m = prefix
 
-let reserved_ascii (c : char) : bool =
+let reserved_ascii (c : letter) : bool =
   match c with
   | '(' | ')' | '|' | '*' | '+' | '?' | '.' -> true
   | _ -> false
 
-let is_ascii (c : char) : bool =
-  Char.code c < 128
-
 let can_start_atom (s : string) (i : int) : bool =
   i < String.length s &&
   (
-    is_prefix_at s i epsilon ||
+    is_prefix_at s i eps ||
     match s.[i] with
     | '(' | '.' -> true
     | ')' | '|' | '*' | '+' | '?' -> false
-    | c when is_ascii c && not (reserved_ascii c) -> true
+    | c when not (reserved_ascii c) -> true
     | _ -> false
   )
 
@@ -62,7 +58,7 @@ let errorf msg = Error msg
    - '?' is desugared: r?  ==> Or (r, Eps)
 *)
 
-let parser (input : string) : char reg error_option =
+let parser (input : string) : letter reg error_option =
   let len = String.length input in
 
   let rec parse_alt i =
@@ -116,8 +112,8 @@ let parser (input : string) : char reg error_option =
   and parse_atom i =
     if i >= len then
       Error "unexpected end of input"
-    else if is_prefix_at input i epsilon then
-      Value (Eps, i + String.length epsilon)
+    else if is_prefix_at input i eps then
+      Value (Eps, i + String.length eps)
     else
       match input.[i] with
       | '.' ->
@@ -147,9 +143,7 @@ let parser (input : string) : char reg error_option =
           Error "postfix operator without a preceding expression"
 
       | c ->
-          if not (is_ascii c) then
-            Error "non-ASCII literal found (only ASCII literals are supported, except the special token ε)"
-          else if reserved_ascii c then
+          if reserved_ascii c then
             Error "unexpected reserved character"
           else
             Value (Lit c, i + 1)
@@ -168,7 +162,7 @@ let parser (input : string) : char reg error_option =
           | ')' -> Error "unexpected ')' at top level"
           | _ -> Error "unexpected trailing characters"
 
-let pretty_printer (r : char reg error_option) : string =
+let pretty_printer (r : letter reg error_option) : string =
   let rec pp prec re =
     match re with
     | Eps ->
@@ -211,7 +205,7 @@ let pretty_printer (r : char reg error_option) : string =
   | Value re ->
       pp 0 re
 
-let raw_printer (r : char reg error_option) : string =
+let raw_printer (r : letter reg error_option) : string =
   let rec print_reg v = match v with
     | Any -> "Any"
     | Eps -> "Eps"

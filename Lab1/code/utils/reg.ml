@@ -1,5 +1,5 @@
 (** 
-    Inductive definition of Reg type
+    reg.ml --- Inductive definition of Reg type
 *)
 
 type 'a reg =
@@ -10,8 +10,6 @@ type 'a reg =
   | Concat of 'a reg * 'a reg   (* Concatenation *)
   | Star of 'a reg              (* Kleene Star *)
 
-(* In the parser, "R+" will be changed to "RR*",
-   and "R?" will be changed to "(R|Eps)" *)
+(* Notice that "r+" = "rr*" and "r?" = "(r|Eps)" *)
 
-(** Specialized version using ASCII characters *)
-type char_reg = char reg
+type letter = char

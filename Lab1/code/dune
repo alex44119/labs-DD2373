@@ -1,3 +1,7 @@
 (executable
- (name main)
- (libraries utils))
+  (name main)
+  (libraries utils))
+
+(executable
+  (name test_parser)
+  (libraries utils))

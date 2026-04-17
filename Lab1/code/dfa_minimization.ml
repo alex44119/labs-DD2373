@@ -35,10 +35,17 @@ let tab_init (d : dfa) : string array array =
   (* HERE WE SUPPOSE THE STATES ARE 0,...,N-1 !!!!! TO BE CHECKED *)
   
   let n = List.length d.states in 
-  Array.make n (Array.make n "")
+  let res = Array.make_matrix n n "" in
+
+  for i=0 to n-1 do 
+    for j=0 to n-1 do 
+      if (List.mem i d.final != List.mem j d.final) then res.(i).(j) <- epsilon;
+    done
+  done;
+  res;;
 
 let array_equal eq a b =
-  (* Useful function to check if two arrays a and b are equal according to the comparative function eq *)
+  (* Useful function to check if two arrays a and b are equal according to the comparative function eq (Array.equal) *)
 
   let n = Array.length a in
   n = Array.length b &&
