@@ -1,9 +1,16 @@
 (**
   nfa_dfa.ml --- Converts NFA to DFA by the subset construction
+
+  (Section  I) 
+    nfa_temp_dfa : nfa -> temporary_dfa
+
+  (Section II) 
+    temp_dfa_dfa : temporary_dfa -> dfa
 *)
 
 open Alphabet
 open Automata
+open Basics
 
 (* Section I : From NFA to temporary DFA *)
 
@@ -39,9 +46,9 @@ let nfa_temp_dfa_delta (n : nfa) (q : temporary_state) (s : letter) : temporary_
   
   match q with 
   | [] -> []
-  | _ -> let q_s = flatten (List.map (fun x -> n.delta x (Let s)) q) in 
+  | _ -> let q_s = dedup (List.flatten (List.map (fun x -> n.delta x (Let s)) q)) in 
       let q_eclose = List.map (eclose n) q_s in 
-      flatten q_eclose
+      dedup (List.flatten q_eclose)
 
 
 (* 4. NFA alphabet to temporary DFA alphabet *)
@@ -87,7 +94,6 @@ let nfa_temp_dfa (n : nfa) : temporary_dfa =
 (* 1. States mapping in both directions *)
 let maps_dfa (states : temporary_state list) (s : state) : temporary_state = 
   (* Returns the temporary state corresponding to state s *)
-
   List.nth states s
 
 

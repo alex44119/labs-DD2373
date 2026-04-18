@@ -22,21 +22,8 @@ let (>)  s1 s2 = cmp s1 s2 > 0
 let (<=) s1 s2 = cmp s1 s2 <= 0
 let (>=) s1 s2 = cmp s1 s2 >= 0
 
-(* Definition of the temporary state, flatten and infix comparators *)
+(* Definition of the temporary state *)
 type temporary_state = state list
-let flatten (l : temporary_state list) : temporary_state = 
-  (* Returns the list of states in the lists in l, without repetition. *)
-  let rec aux (to_check : state list list) (seen : state list) = 
-    match to_check with 
-    | [] -> seen
-    | hd::tl -> match hd with 
-      | [] -> aux tl seen
-      | x::y ->
-          if List.mem x seen then
-            aux (y::tl) seen
-          else
-            aux (y::tl) (x::seen)
-  in List.sort cmp (aux l []);;
 
 (* Definition of Deterministic Finite Automata*)
 type dfa = 

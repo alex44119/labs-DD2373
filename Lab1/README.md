@@ -37,7 +37,6 @@ Extension VSCode : [https://marketplace.visualstudio.com/items?itemName=ocamllab
 ```bash
 % tree code
 code
-├── dfa_minimization.ml
 ├── dune
 ├── dune-project
 ├── main.ml
@@ -49,9 +48,11 @@ code
 │   ├── testcase4.txt
 │   └── testcase5.txt
 └── utils
+    ├── dune
     ├── alphabet.ml
     ├── automata.ml
-    ├── dune
+    ├── basics.ml
+    ├── dfa_minimization.ml
     ├── nfa_dfa.ml
     ├── parser.ml
     └── reg.ml
@@ -95,6 +96,11 @@ Ou encore tu peux directement exécuter `main.ml` pour mieux débugger :
 
 ### 3.3 Converting the ϵ-NFA into an equivalent DFA
 
+- [nfa_dfa.ml](code/utils/nfa_dfa.ml)
+- [automata.ml](code/utils/automata.ml)
+
 ### 3.4 Minimizing the DFA
+
+- [dfa_minimization.ml](code/utils/dfa_minimization.ml)
 
 ### 3.5 Simulating the DFA
