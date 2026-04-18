@@ -139,7 +139,7 @@ let temp_dfa_dfa (d : temporary_dfa) : dfa =
   (* Returns the renamed DFA from the temporary DFA d *)
 
   {
-    max_state = List.length d.states;
+    nb_states = List.length d.states;
     alphabet = d.alphabet;
     delta = temp_dfa_dfa_delta d ;
     initial = temp_dfa_dfa_initial d ;

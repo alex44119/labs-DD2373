@@ -24,3 +24,10 @@ let dedup lst =
   in
   aux [] lst
 
+(* String to char list *)
+let string_to_char_list s =
+  List.of_seq (String.to_seq s)
+
+(* Char list to string *)
+let char_list_to_string lst =
+  String.of_seq (List.to_seq lst)

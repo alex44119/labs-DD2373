@@ -28,7 +28,7 @@ type temporary_state = state list
 (* Definition of Deterministic Finite Automata*)
 type dfa = 
   {
-    max_state : state;
+    nb_states : state; 
     alphabet : letter list;
     delta : state -> letter -> state;
     initial : state;
@@ -48,9 +48,16 @@ type temporary_dfa =
 (* Definition of Non-deterministic Finite Automata*)
 type nfa = 
   {
-    max_state : state;
+    nb_states : state; 
     alphabet : nfa_letter list;
     delta : state -> nfa_letter -> state list;
     initial : state;
+    final : state list
+  }
+
+type mini_nfa = (* Initial state should be always 0 and alphabet is any char *)
+  {
+    nb_states : state; 
+    delta : state -> nfa_letter -> state list;
     final : state list
   }

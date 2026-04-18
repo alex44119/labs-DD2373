@@ -40,7 +40,7 @@ PS : Empty strings are already used to say that no distinguishing element has be
 let tab_init (d : dfa) : string array array = 
   (* Initializes the table with empty strings, according to the Table Filling algorithm *)
 
-  let n = d.max_state in 
+  let n = d.nb_states in 
   let res = Array.make_matrix n n "" in
 
   for i=0 to n-1 do 
