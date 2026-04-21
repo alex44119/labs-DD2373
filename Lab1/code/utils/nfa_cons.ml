@@ -42,7 +42,7 @@ let nfa_cons_or (n1:mini_nfa) (n2:mini_nfa) : mini_nfa=
                                                           |(_, _) when s <= n1.nb_states 
                                                               -> List.map ((+) 1) (n1.delta (s-1) l)
                                                           |(_, _) when s <= n1.nb_states + n2.nb_states
-                                                              -> List.map ((+) (1 + n1.nb_states)) (n1.delta (s-1-n1.nb_states) l)
+                                                              -> List.map ((+) (1 + n1.nb_states)) (n2.delta (s-1-n1.nb_states) l)
                                                           |_ -> []);
     final = (List.map ((+) 1) n1.final)@(List.map ((+) (1 + n1.nb_states)) n2.final)
   }
