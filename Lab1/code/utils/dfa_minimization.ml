@@ -89,21 +89,17 @@ let equivalence_states (tab : string array array) : temporary_state list =
   in aux 0 0 []
 
 (* 2. State mapping functions in both directions *)
-let maps (eq : state list list) (s : state) : temporary_state = 
-  (* Returns the list of equivalent states that corresponds to the state s *)
-  List.nth eq s;;
+let rec maps (eq : temporary_state list) (s : state) : temporary_state = 
+  match eq with
+  | [] -> []
+  | l :: rest ->
+      if List.mem s l then l
+      else maps rest s
 
-let maps_rev (eq : state list list) (t_state : temporary_state) : state = 
-  (* Returns the number of the equivalence class to which the state t belongs *)
-  match t_state with 
-   |[] -> failwith "State t is empty, this is impossible for equivalent classes."
-   |t::_ ->
-      let rec aux (l : state list list) (s : state) = 
-        match l with 
-        | [] -> failwith "State t is too big, it does not exist"
-        | hd::_ when List.mem t hd -> s
-        | _::tl -> aux tl (s + 1)
-      in aux eq 0;;
+let maps_rev (l : temporary_state) : state =
+  match l with
+  | x :: _ -> x
+  | [] -> failwith "Liste vide impossible"
 
 (* 3. Construct the temporary dfa (states are still to be renamed) *)
 let dfa_temp_dfa (d : dfa) : temporary_dfa = 
@@ -114,7 +110,7 @@ let dfa_temp_dfa (d : dfa) : temporary_dfa =
   {
     states = eq;
     alphabet = d.alphabet;
-    delta = (fun x a -> maps eq (d.delta (maps_rev eq x) a));
+    delta = (fun x a -> maps eq (d.delta (maps_rev x) a));
     initial = maps eq d.initial;
     final = dedup (List.map (maps eq) d.final)
   }
