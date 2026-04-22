@@ -27,7 +27,7 @@ let eclose (n : nfa) (q : state) : temporary_state =
         else
           let eps_moves = n.delta x Eps in
             aux (eps_moves @ xs) (x :: visited) (* BFS algorithm *)
-  in List.sort cmp (aux [q] [])
+  in List.sort compare (aux [q] [])
 
 let rec is_final (n : nfa) (q : temporary_state) : bool = 
   (* Returns true iff there is a final state of the NFA n in the temporary state q. *)

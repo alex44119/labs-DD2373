@@ -12,15 +12,6 @@ open Alphabet
 
 (* Definition of the type state, and its infix comparators *)
 type state = int
-let cmp (a : state) (b : state) : int = 
-  match a,b with
-  | _ when a = b -> 0
-  | _ when a < b -> -1
-  | _ -> 1
-let (<)  s1 s2 = cmp s1 s2 < 0
-let (>)  s1 s2 = cmp s1 s2 > 0
-let (<=) s1 s2 = cmp s1 s2 <= 0
-let (>=) s1 s2 = cmp s1 s2 >= 0
 
 (* Definition of the temporary state *)
 type temporary_state = state list
