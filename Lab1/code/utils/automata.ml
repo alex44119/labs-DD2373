@@ -1,11 +1,5 @@
 (**
   automata.ml --- Defines automata types
-
-  type "state" and type "dfa"
-
-  type "temporary_state" and type "temporary_dfa"
-
-  type "nfa"
 *)
 
 open Alphabet
