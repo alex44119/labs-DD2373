@@ -42,7 +42,7 @@ let nfa_cons_or (n1:mini_nfa) (n2:mini_nfa) : mini_nfa=
                                                           |(_, _) when s <= n1.nb_states 
                                                               -> List.map ((+) 1) (n1.delta (s-1) l)
                                                           |(_, _) when s <= n1.nb_states + n2.nb_states
-                                                              -> List.map ((+) (1 + n1.nb_states)) (n1.delta (s-1-n1.nb_states) l)
+                                                              -> List.map ((+) (1 + n1.nb_states)) (n2.delta (s-1-n1.nb_states) l)
                                                           |_ -> []);
     final = (List.map ((+) 1) n1.final)@(List.map ((+) (1 + n1.nb_states)) n2.final)
   }
@@ -53,9 +53,9 @@ let nfa_cons_concat (n1:mini_nfa) (n2:mini_nfa) : mini_nfa =
     nb_states = n1.nb_states + n2.nb_states;
     delta = (fun (s:int) (l:nfa_letter) -> (if (List.mem s n1.final) && l = Eps then 
                                                 n1.nb_states::(n1.delta s l)
-                                            else if s <= n1.nb_states then
+                                            else if s < n1.nb_states then
                                                 n1.delta s l
-                                            else if s <= n1.nb_states + n2.nb_states then
+                                            else if s < n1.nb_states + n2.nb_states then
                                                 List.map ((+) (n1.nb_states)) (n2.delta (s-n1.nb_states) l)
                                             else []));
     final = (List.map ((+) (n1.nb_states)) n2.final)
