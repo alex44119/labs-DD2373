@@ -25,7 +25,7 @@ let dedup lst =
   aux [] lst
 
 (* String to char list *)
-let string_to_char_list s =
+let string_to_char_list (s : string) =
   List.of_seq (String.to_seq s)
 
 (* Char list to string *)
@@ -47,18 +47,6 @@ let write (name_file : string) content : unit =
   let oc = open_out ("viewer/" ^ name_file) in
   output_string oc content;
   close_out oc
-
-(* Open html file *)
-let launch (name_file : string) : unit =
-  let cmd =
-    if Sys.os_type = "Unix" then
-      "open "^name_file         (* macOS *)
-    else if Sys.os_type = "Win32" then
-      "start "^name_file         (* Windows *)
-    else
-      "xdg-open "^name_file      (* Linux fallback *)
-  in
-  ignore (Sys.command cmd)
 
 let launch_server (port:int) (time:int) =
   let cmd =

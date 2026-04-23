@@ -11,8 +11,8 @@ open Utils.Alphabet
 open Utils.Viewer
 open Utils.Dfa_minimization
 
-let regexp_unparsed : string = "ε|(ab)(ab)*"
-let alphabet_unparsed : string = "ab";;
+let regexp_unparsed : string = ".*abc.*"
+let alphabet_unparsed : string = "abc";;
 let regexp = let r = parser regexp_unparsed in
   match r with
     |Value(a) -> a
@@ -29,4 +29,4 @@ write "temp_dfa.json" (temporary_dfa_viewer [temp_dfa]);;
 write "dfa.json" (dfa_viewer [dfa; min_dfa]);;
 
 launch_server 8000 300;;
-launch "http://localhost:8000/viewer/homework.html";;
+print_string "The server is running:\n\nhttp://localhost:8000/viewer/homework.html\n\n";;

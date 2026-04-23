@@ -1,8 +1,8 @@
 [{
         "type": "nfa",
-        "states": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        "alphabet": ["ε", "a", "b"],
-        "transitions": [{ "from": 9, "to": 6, "label": "ε" }, { "from": 8, "to": 9, "label": "b" }, { "from": 7, "to": 8, "label": "ε" }, { "from": 6, "to": 7, "label": "a" }, { "from": 6, "to": 10, "label": "ε" }, { "from": 5, "to": 6, "label": "ε" }, { "from": 4, "to": 5, "label": "b" }, { "from": 3, "to": 4, "label": "ε" }, { "from": 2, "to": 3, "label": "a" }, { "from": 0, "to": 2, "label": "ε" }, { "from": 0, "to": 1, "label": "ε" }],
+        "states": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "alphabet": ["ε", "a", "b", "c"],
+        "transitions": [{ "from": 2, "to": 3, "label": "ε" }, { "from": 1, "to": 0, "label": "ε" }, { "from": 8, "to": 9, "label": "ε" }, { "from": 9, "to": 10, "label": "a, b, c, ε" }, { "from": 6, "to": 7, "label": "ε" }, { "from": 7, "to": 8, "label": "c" }, { "from": 0, "to": 2, "label": "ε" }, { "from": 9, "to": 11, "label": "ε" }, { "from": 10, "to": 9, "label": "ε" }, { "from": 0, "to": 1, "label": "a, b, c, ε" }, { "from": 5, "to": 6, "label": "b" }, { "from": 3, "to": 4, "label": "a" }, { "from": 4, "to": 5, "label": "ε" }],
         "initial": 0,
-        "final": [1, 10]
+        "final": [11]
       }]
