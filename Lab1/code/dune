@@ -5,3 +5,8 @@
 (executable
   (name test_parser)
   (libraries utils))
+
+
+(executable
+  (name homework)
+  (libraries utils))

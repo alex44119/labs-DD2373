@@ -31,3 +31,48 @@ let string_to_char_list s =
 (* Char list to string *)
 let char_list_to_string lst =
   String.of_seq (List.to_seq lst)
+
+
+(* JSON Helpers *)
+
+let list_to_json_array conv lst =
+  "[" ^ (String.concat ", " (List.map conv lst)) ^ "]"
+
+let state_to_json s = string_of_int s
+
+let temp_state_to_json states =
+  "[" ^ (String.concat ", " (List.map string_of_int states)) ^ "]"
+
+let write (name_file : string) content : unit =
+  let oc = open_out ("viewer/" ^ name_file) in
+  output_string oc content;
+  close_out oc
+
+(* Open html file *)
+let launch (name_file : string) : unit =
+  let cmd =
+    if Sys.os_type = "Unix" then
+      "open "^name_file         (* macOS *)
+    else if Sys.os_type = "Win32" then
+      "start "^name_file         (* Windows *)
+    else
+      "xdg-open "^name_file      (* Linux fallback *)
+  in
+  ignore (Sys.command cmd)
+
+let launch_server (port:int) (time:int) =
+  let cmd =
+    if Sys.os_type = "Win32" then
+      Printf.sprintf
+        "powershell -Command \"$p = Start-Process python -ArgumentList '-m http.server %d' -PassThru -WindowStyle Hidden; Start-Sleep -Seconds %d; Stop-Process -Id $p.Id\""
+        port time
+    else
+      Printf.sprintf
+        "( python3 -m http.server %d > /dev/null 2>&1 & pid=$!; sleep %d; kill $pid ) &"
+        port time
+  in
+  ignore (Sys.command cmd)
+;;
+
+
+let bash (cmd : string) = ignore (Sys.command cmd) 

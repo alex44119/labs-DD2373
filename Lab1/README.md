@@ -12,6 +12,10 @@ dune exec ./main.exe
 dune exec ./test_parser.exe
 ```
 
+```bash
+dune exec ./homework.exe
+```
+
 ## Setup
 
 ```bash

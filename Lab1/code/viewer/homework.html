@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCaml Automata Visualizer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css" />
+    <link href="style.css" rel="stylesheet" />
+</head>
+
+<body>
+    <h1>Homework 2 using Lab 1</h1>
+    <div class="container">
+        <div class="automaton-container">
+            <h2>Strating NFA from RegExp</h2>
+            <div id="network-nfa-0" class ="automata"></div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button onclick="visualizeNFA(0)">Generate</button>
+                <a href="nfa.json" class="json_but">&lt;/json&gt;</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="automaton-container">
+            <h2>Temporary DFA</h2>
+            <div id="network-temp-dfa-0" class ="automata"></div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button onclick="visualizeTempDFA(0)">Generate</button>
+                <a href="temp_dfa.json" class="json_but">&lt;/json&gt;</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="automaton-container">
+            <h2>Associated DFA</h2>
+            <div id="network-dfa-0" class = "automata"></div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button onclick="visualizeDFA(0)">Generate</button>
+                <a href="dfa.json" class="json_but">&lt;/json&gt;</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="automaton-container">
+            <h2>Minimized DFA</h2>
+            <div id="network-dfa-1" class = "automata"></div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button onclick="visualizeDFA(1)">Generate</button>
+                <a href="dfa.json" class="json_but">&lt;/json&gt;</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let automataData = {
+            dfa: null,
+            nfa: null,
+            tempDfa: null
+        };
+
+        async function load(input) {
+            try {
+                const response = await fetch(input);
+                if (!response.ok) {
+                    throw new Error(`Failed to load ${input}: ${response.statusText}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error(error);
+                return null;
+            }
+        }
+
+        async function loadAllAutomata() {
+            automataData.dfa = await load('dfa.json');
+            automataData.nfa = await load('nfa.json');
+            automataData.tempDfa = await load('temp_dfa.json');
+        }
+
+        function visualizeDFA(n) {
+            try {
+                const dfa = automataData.dfa[n];
+                if (!dfa) return;
+
+                const nodes = [];
+                const edges = [];
+
+                // Nodes (FIXED)
+                dfa.states.forEach(state => {
+                    const isFinal = dfa.final.includes(state);
+                    const isInitial = state === dfa.initial;
+
+                    nodes.push({
+                        id: state,
+                        label: `q${state}`,
+                        color: isInitial ? { background: '#90EE90' } : { background: '#E0F7FA' },
+                        borderWidth: isFinal ? 3 : 1,
+                        borderWidthSelected: 3
+                    });
+                });
+
+                // Edges (FIXED)
+                dfa.transitions.forEach(t => {
+                    edges.push({
+                        from: t.from,
+                        to: t.to,
+                        label: t.label,
+                        arrows: 'to',
+                        font: { align: 'middle' }
+                    });
+                });
+
+                const container = document.getElementById('network-dfa-'+n);
+                const data = { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) };
+                new vis.Network(container, data, {});
+            } catch (e) {
+                alert("Error parsing DFA: " + e.message);
+            }
+        }
+
+        function visualizeNFA(n) {
+            try {
+                const nfa = automataData.nfa[n];
+                if (!nfa) return;
+
+                const nodes = [];
+                const edges = [];
+
+                nfa.states.forEach(state => {
+                    const isFinal = nfa.final.includes(state);
+                    const isInitial = state === nfa.initial;
+
+                    nodes.push({
+                        id: state,
+                        label: `q${state}`,
+                        color: isInitial ? { background: '#90EE90' } : { background: '#E0F7FA' },
+                        borderWidth: isFinal ? 3 : 1,
+                        borderWidthSelected: 3
+                    });
+                });
+
+                nfa.transitions.forEach(t => {
+                    edges.push({
+                        from: t.from,
+                        to: t.to,
+                        label: t.label,
+                        arrows: 'to',
+                        font: { align: 'middle' }
+                    });
+                });
+
+                const container = document.getElementById('network-nfa-'+n);
+                const data = { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) };
+                new vis.Network(container, data, {});
+            } catch (e) {
+                alert("Error parsing NFA: " + e.message);
+            }
+        }
+
+        function visualizeTempDFA(n) {
+            try {
+                const tempDfa = automataData.tempDfa[n];
+                if (!tempDfa) return;
+
+                const nodes = [];
+                const edges = [];
+
+                tempDfa.states.forEach(state => {
+                    const isFinal = tempDfa.final.some(f => JSON.stringify(f) === JSON.stringify(state));
+                    const isInitial = JSON.stringify(tempDfa.initial) === JSON.stringify(state);
+
+                    nodes.push({
+                        id: JSON.stringify(state),
+                        label: `{${state.join(',')}}`,
+                        color: isInitial ? { background: '#90EE90' } : { background: '#E0F7FA' },
+                        borderWidth: isFinal ? 3 : 1,
+                        borderWidthSelected: 3
+                    });
+                });
+
+                // Edges (FIXED)
+                tempDfa.transitions.forEach(t => {
+                    edges.push({
+                        from: JSON.stringify(t.from),
+                        to: JSON.stringify(t.to),
+                        label: t.label,
+                        arrows: 'to',
+                        font: { align: 'middle' }
+                    });
+                });
+
+                const container = document.getElementById('network-temp-dfa-'+n);
+                const data = { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) };
+                const options = {
+                    layout: { hierarchical: false },
+                    physics: { enabled: true },
+                    edges: { smooth: true }
+                };
+
+                new vis.Network(container, data, options);
+            } catch (e) {
+                alert("Error parsing Temporary DFA: " + e.message);
+            }
+        }
+
+        window.onload = async function () {
+            await loadAllAutomata();
+            visualizeDFA(0);
+            visualizeDFA(1);
+            visualizeNFA(0);
+            visualizeTempDFA(0);
+        };
+    </script>
+</body>
+
+</html>

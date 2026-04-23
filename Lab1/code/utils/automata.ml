@@ -46,3 +46,14 @@ type mini_nfa = (* Initial state should be always 0 and alphabet is any char *)
     delta : state -> nfa_letter -> state list;
     final : state list
   }
+
+let mini_to_nfa (n:mini_nfa) (alphabet : nfa_letter list) =
+  {
+    nb_states = n.nb_states; 
+    alphabet = alphabet;
+    delta = n.delta;
+    initial = 0;
+    final = n.final
+  }
+
+type automaton = DFA of dfa | TempDFA of temporary_dfa | NFA of nfa | MinNFA of mini_nfa * (nfa_letter list)
