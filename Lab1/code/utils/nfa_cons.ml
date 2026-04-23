@@ -20,7 +20,7 @@ let nfa_cons_eps : mini_nfa =
 let nfa_cons_any : mini_nfa =
   {
     nb_states = 2;
-    delta = (fun (s:int) (_:nfa_letter) -> match s with |0 -> [1] |_ -> []);
+    delta = (fun (s:int) (l:nfa_letter) -> match s,l with |0, Let _ -> [1] |_ -> []);
     final = [1]
   }
 

@@ -11,7 +11,7 @@ open Utils.Alphabet
 open Utils.Viewer
 open Utils.Dfa_minimization
 
-let regexp_unparsed : string = ".*abc.*"
+let regexp_unparsed : string = "ε|ab(ab)*"
 let alphabet_unparsed : string = "abc";;
 let regexp = let r = parser regexp_unparsed in
   match r with
