@@ -5,7 +5,7 @@
 ## Comment exécuter les executables ?
 
 ```bash
-dune exec ./main.exe
+dune exec ./main.exe < testcases/testcase1.txt
 ```
 
 ```bash
