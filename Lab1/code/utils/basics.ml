@@ -64,3 +64,13 @@ let launch_server (port:int) (time:int) =
 
 
 let bash (cmd : string) = ignore (Sys.command cmd) 
+
+(* Read lines of an entry file *)
+let read_all_lines () =
+  let rec aux acc =
+    try
+      let line = read_line () in
+      aux (line :: acc)
+    with End_of_file -> List.rev acc
+  in
+  aux [];;

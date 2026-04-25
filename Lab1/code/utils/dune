@@ -1,3 +1,3 @@
 (library
  (name utils)
- (modules basics alphabet reg parser automata nfa_dfa dfa_minimization nfa_cons viewer))
+ (modules basics alphabet reg parser automata nfa_dfa dfa_minimization nfa_cons viewer simulation))
