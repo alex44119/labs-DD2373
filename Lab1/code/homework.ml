@@ -29,4 +29,4 @@ write "temp_dfa.json" (temporary_dfa_viewer [temp_dfa]);;
 write "dfa.json" (dfa_viewer [dfa; min_dfa]);;
 
 launch_server 8000 300;;
-print_string "The server is running:\n\nhttp://localhost:8000/viewer/homework.html\n\n";;
+print_string "The server is running:\n\nhttp://localhost:8000/viewer\n\n";;
