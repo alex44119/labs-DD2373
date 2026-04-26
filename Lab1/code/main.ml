@@ -32,6 +32,6 @@ let min_dfa = temp_dfa_dfa (dfa_temp_dfa dfa);;
 
 List.iter (fun line ->
   let input = string_to_char_list line in 
-  if List.mem (delta_hat_dfa_early_stop min_dfa min_dfa.initial input) min_dfa.final then
+  if simulate (DFA min_dfa) input then
     print_endline line
 ) text_lines;;

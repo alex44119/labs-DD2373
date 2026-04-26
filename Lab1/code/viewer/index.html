@@ -47,6 +47,17 @@
 
     <div class="container">
         <div class="automaton-container">
+            <h2>Temporary DFA</h2>
+            <div id="network-temp-dfa-1" class ="automata"></div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button onclick="visualizeTempDFA(1)">Generate</button>
+                <a href="temp_dfa.json" class="json_but">&lt;/json&gt;</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="automaton-container">
             <h2>Minimized DFA</h2>
             <div id="network-dfa-1" class = "automata"></div>
             <div style="display: flex; gap: 8px; align-items: center;">

@@ -22,10 +22,11 @@ let alphabet = string_to_char_list alphabet_unparsed;;
 let nfa = mini_to_nfa (nfa_cons regexp) (Eps::(List.map (fun x -> Let x) alphabet))
 let temp_dfa = nfa_temp_dfa nfa
 let dfa = temp_dfa_dfa temp_dfa;;
-let min_dfa = temp_dfa_dfa (dfa_temp_dfa dfa);;
+let temp_min_dfa = dfa_temp_dfa dfa;;
+let min_dfa = temp_dfa_dfa temp_min_dfa;;
 
 write "nfa.json" (nfa_viewer [nfa]);;
-write "temp_dfa.json" (temporary_dfa_viewer [temp_dfa]);;
+write "temp_dfa.json" (temporary_dfa_viewer [temp_dfa; temp_min_dfa]);;
 write "dfa.json" (dfa_viewer [dfa; min_dfa]);;
 
 launch_server 8000 300;;
