@@ -6,7 +6,10 @@
   (name test_parser)
   (libraries utils))
 
-
 (executable
   (name homework)
   (libraries utils))
+
+(executable
+  (name speed_tests)
+  (libraries utils unix))
