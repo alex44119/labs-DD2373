@@ -4,24 +4,27 @@
 
 open Dfa
 
-type node = int
+type node = 
+  {
+    id : int;
+    entry : bool;
+    return : bool;
+    meth : meth
+  }
 
 type flowgraph = 
   {
     methods : meth list;
-    nb_nodes : int;
-    node_meth : node -> meth;
-    entry_nodes : node list;
-    ret_nodes : node list;
-    edge_func : node -> meth -> node
+    nodes : node list;
+    edge_func : meth list array array
   }
 
 (* Returns the entry node of the main function *)
-let get_entry_node (fg : flowgraph) (m : meth) : node = 
+let get_entry_node (fg : flowgraph) (m : meth) : int = 
   let rec aux l = 
     match l with
     | []  -> failwith "Error : this method is not detected"
-    | hd::_ when fg.node_meth hd = m -> hd
+    | hd::_ when (hd.entry && String.equal hd.meth m) -> hd.id
     | _::tl -> aux tl
-  in aux fg.entry_nodes;;
+  in aux fg.nodes;;
 

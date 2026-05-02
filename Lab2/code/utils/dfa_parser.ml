@@ -4,23 +4,17 @@
 
 open Dfa
 
-let extract_state s =
-  let s = String.trim s in
-  let len = String.length s in
-  let core =
-    if s.[0] = '(' || s.[0] = '[' then
-      String.sub s 1 (len - 2)
-    else s
-  in
-  int_of_string (String.sub core 1 (String.length core - 1))
+type line_t = 
+  {
+    init : bool;
+    src : string;
+    src_fin : bool;
+    met : meth;
+    goal : string;
+    goal_fin : bool
+  };;
 
-let is_final s =
-  let s = String.trim s in
-  s.[0] = '('
-
-
-
-let parse_line (line : string) : bool * string * bool * meth * string * bool = 
+let parse_line (line : string) : line_t = 
   let line = String.trim line in 
   
   let (init, line) =
@@ -37,19 +31,26 @@ let parse_line (line : string) : bool * string * bool * meth * string * bool =
 
       let (src_fin, bef) =
         if bef.[0] = '(' then
-          (true, String.sub bef 1 (String.length bef - 1))
+          (true, String.sub bef 1 (String.length bef - 2))
         else 
-          (false, String.sub bef 1 (String.length bef - 1))
+          (false, String.sub bef 1 (String.length bef - 2))
       in let src = bef in 
 
       let (goal_fin, aft) =
         if aft.[1] = '(' then
-          (true, String.sub aft 2 (String.length bef - 2))
+          (true, String.sub aft 2 (String.length aft - 3))
         else 
-          (false, String.sub aft 2 (String.length bef - 2))
+          (false, String.sub aft 2 (String.length aft - 3))
       in let goal = aft in 
-
-      init, src, src_fin, met, goal, goal_fin
+      
+      {
+        init = init; 
+        src = src;
+        src_fin = src_fin;
+        met = met;
+        goal = goal;
+        goal_fin = goal_fin 
+      }
 
   | _ -> failwith ("Invalid line: " ^ line)
 
@@ -57,32 +58,73 @@ let parse_line (line : string) : bool * string * bool * meth * string * bool =
 
 
 let first_read (lines : string list) : (meth list * meth list * meth * meth list) = 
-  let rec aux line_l state_l meth_l init_l fin_l = 
+  let rec aux (line_l : string list) (state_l : meth list) (meth_l : meth list) (init_l : meth list) (fin_l : meth list) = 
     match line_l with 
     | [] when List.length init_l != 1 -> failwith "Error with initial state"
     | [] -> (state_l, meth_l, List.hd init_l, fin_l)
     | hd::tl -> 
-          let init, src, src_fin, met, goal, goal_fin = parse_line hd in 
-          let res_state = ref state_l in 
-          let res_fin = ref fin_l in 
-          let res_init = ref init_l in 
-          let res_meth = ref meth_l in 
+          let line = parse_line hd in 
 
-          if init && not (List.mem src !res_init) then (res_init := src :: !res_init);
+          let res_state = 
+            if (not (List.mem line.src state_l)) then 
+              (if (not (List.mem line.goal state_l)) then 
+                (line.src :: line.goal :: state_l)
+              else
+                (line.src :: state_l))
+            else
+              (if (not (List.mem line.goal state_l)) then 
+                (line.goal :: state_l)
+              else
+                (state_l))
+          in
 
-          if not (List.mem src !res_state) then (res_state :=  src :: !res_state);
-          if not (List.mem goal !res_state) then (res_state :=  goal :: !res_state);
+          let res_fin = 
+            if (line.src_fin && not (List.mem line.src fin_l)) then 
+              (if (line.goal_fin && not (List.mem line.goal fin_l)) then 
+                (line.src :: line.goal :: fin_l)
+              else
+                (line.src :: fin_l))
+            else
+              (if (line.goal_fin && not (List.mem line.goal fin_l)) then 
+                (line.goal :: fin_l)
+              else
+                (fin_l))
+          in
 
-          if src_fin && not (List.mem src !res_fin) then (res_fin :=  src :: !res_fin);
-          if goal_fin && not (List.mem goal !res_fin) then (res_fin :=  goal :: !res_fin);
+          let res_init = 
+            if (line.init && not (List.mem line.src init_l)) then 
+              (line.src :: init_l)
+            else
+              (init_l)
+          in 
 
-          if not (List.mem met !res_meth) then (res_meth :=  met :: !res_meth);
+          let res_meth = 
+            if (not (List.mem line.met meth_l)) then 
+              (line.met :: meth_l)
+            else
+              (meth_l)
+          in 
 
-          aux tl !res_state !res_meth !res_init !res_fin
+          aux tl res_state res_meth res_init res_fin
   in aux lines [] [] [] [];;
 
 
-              
+
+let second_read (lines : string list) (delt : meth list array array) (state_l : meth list) : unit = 
+  let rec aux (lines : string list) : unit = 
+    match lines with 
+    | [] -> ()
+    | hd :: tl -> 
+          let line = parse_line hd in
+          let a = List.find_index (String.equal line.src) state_l in 
+          let b = List.find_index (String.equal line.goal) state_l in 
+          match (a,b) with 
+          | Some(i), Some(j) -> delt.(i).(j) <- line.met :: delt.(i).(j); aux tl
+          | _,_ -> failwith "Error when renaming the methods to states"
+  in aux lines;;
+
+
+
 (* Returns all the lines of the file which path is filename *)
 let read_lines filename =
   let ic = open_in filename in
@@ -104,13 +146,30 @@ let build_dfa filename : dfa =
   let n = List.length state_l in 
   let delt = Array.make_matrix n n [] in 
 
-  second_read lines delt;
+  second_read lines delt state_l;
 
+  let a = 
+    match List.find_index (String.equal init) state_l with
+    | Some(i) -> i 
+    | None -> failwith "Error when renaming the methods to states"
+  in 
+
+  let rec aux fin_l = 
+    match fin_l with 
+    | [] -> []
+    | hd :: tl -> 
+      let a = 
+        match List.find_index (String.equal hd) state_l with
+          | Some(i) -> i 
+          | None -> failwith "Error when renaming the methods to states"
+      in a :: (aux tl)
+    in 
+  
   {
     nb_states = n;
     alphabet = meth_l;
     delta = delt; 
-    initial = init;
-    final = fin
-  }
+    initial = a;
+    final = aux fin
+  };;
 
