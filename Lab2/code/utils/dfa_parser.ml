@@ -4,7 +4,7 @@
 
 open Dfa
 
-type line_t = 
+type line_dfa = 
   {
     init : bool;
     src : string;
@@ -14,7 +14,7 @@ type line_t =
     goal_fin : bool
   };;
 
-let parse_line (line : string) : line_t = 
+let parse_line (line : string) : line_dfa = 
   let line = String.trim line in 
   
   let (init, line) =
@@ -142,7 +142,6 @@ let build_dfa filename : dfa =
   let lines = read_lines filename in
 
   let state_l, meth_l, init, fin = first_read lines in 
-  (* renommer les états à un moment *)
   let n = List.length state_l in 
   let delt = Array.make_matrix n n [] in 
 
