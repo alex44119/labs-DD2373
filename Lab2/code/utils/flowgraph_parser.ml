@@ -32,12 +32,12 @@ let first_read (lines : string list) : string list * node list * meth list =
           let line = parse_line hd in 
           match line with 
           | Edge(_) -> aux tl name_l nodes met_l
-          | Node(name, met, str) when String.equal str "" -> 
+          | Node(name, met, str) -> 
                 let node = 
                   {
                     id = List.length name_l;
-                    entry = false;
-                    return = false;
+                    entry = String.equal str "entry";
+                    return = String.equal str "ret";
                     meth = met
                   } in 
 
@@ -45,7 +45,6 @@ let first_read (lines : string list) : string list * node list * meth list =
                   (aux tl (name :: name_l) (node :: nodes) met_l)
                 else 
                   (aux tl (name :: name_l) (node :: nodes) (met :: met_l))
-          | Node(_) -> failwith "Error when reading the last word of a line Node"
   in aux lines [] [] [];;
 
 
