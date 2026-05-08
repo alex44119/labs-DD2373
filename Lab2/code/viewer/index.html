@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Automata and Flowgraph Viewer</title>
+
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            margin-top: 40px;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            margin-top: 25px;
+        }
+
+        .network {
+            width: 100%;
+            height: 450px;
+            border: 1px solid #aaa;
+            background: white;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .legend {
+            background: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .legend-item {
+            margin: 5px 0;
+        }
+
+        .legend-box {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            vertical-align: middle;
+            border: 1px solid #555;
+        }
+
+        .initial {
+            background: #90EE90;
+        }
+
+        .normal {
+            background: #E0F7FA;
+        }
+
+        .entry {
+            background: #FFF3CD;
+        }
+
+        .return {
+            background: #F8D7DA;
+        }
+
+        .entry-return {
+            background: #D6D8FF;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Automata and Flowgraph Viewer</h1>
+
+    <div class="section">
+        <h2>DFA</h2>
+        <div id="dfa-container"></div>
+    </div>
+
+    <div class="section">
+        <h2>Flowgraph</h2>
+        <div id="flowgraph-container"></div>
+    </div>
+
+    <script>
+        let automataData = {
+            dfa: [],
+            flowgraph: []
+        };
+
+        async function loadJSON(path) {
+            const response = await fetch(path);
+
+            if (!response.ok) {
+                throw new Error(`Could not load ${path}`);
+            }
+
+            return await response.json();
+        }
+
+        async function loadAllAutomata() {
+            try {
+                automataData.dfa = await loadJSON("dfa.json");
+            } catch (e) {
+                console.warn("No DFA file loaded:", e.message);
+                automataData.dfa = [];
+            }
+
+            try {
+                automataData.flowgraph = await loadJSON("flowgraph.json");
+            } catch (e) {
+                console.warn("No flowgraph file loaded:", e.message);
+                automataData.flowgraph = [];
+            }
+        }
+
+        function createNetworkContainer(parentId, id, title) {
+            const parent = document.getElementById(parentId);
+
+            const titleElement = document.createElement("h3");
+            titleElement.textContent = title;
+
+            const div = document.createElement("div");
+            div.id = id;
+            div.className = "network";
+
+            parent.appendChild(titleElement);
+            parent.appendChild(div);
+
+            return div;
+        }
+
+        function visualizeDFA(n) {
+            try {
+                const dfa = automataData.dfa[n];
+                if (!dfa) return;
+
+                const containerId = "network-dfa-" + n;
+                createNetworkContainer(
+                    "dfa-container",
+                    containerId,
+                    "DFA " + n
+                );
+
+                const nodes = [];
+                const edges = [];
+
+                dfa.states.forEach(state => {
+                    const isFinal = dfa.final.includes(state);
+                    const isInitial = dfa.initial === state;
+
+                    nodes.push({
+                        id: state,
+                        label: String(state),
+                        color: isInitial
+                            ? { background: "#90EE90" }
+                            : { background: "#E0F7FA" },
+                        borderWidth: isFinal ? 4 : 1,
+                        borderWidthSelected: 4,
+                        shape: "circle"
+                    });
+                });
+
+                dfa.transitions.forEach(t => {
+                    edges.push({
+                        from: t.from,
+                        to: t.to,
+                        label: t.label,
+                        arrows: "to",
+                        font: {
+                            align: "middle"
+                        }
+                    });
+                });
+
+                const container = document.getElementById(containerId);
+
+                const data = {
+                    nodes: new vis.DataSet(nodes),
+                    edges: new vis.DataSet(edges)
+                };
+
+                const options = {
+                    layout: {
+                        hierarchical: false
+                    },
+                    physics: {
+                        enabled: true,
+                        stabilization: true
+                    },
+                    edges: {
+                        smooth: {
+                            type: "dynamic"
+                        }
+                    },
+                    nodes: {
+                        font: {
+                            size: 16
+                        }
+                    }
+                };
+
+                new vis.Network(container, data, options);
+
+            } catch (e) {
+                alert("Error parsing DFA " + n + ": " + e.message);
+            }
+        }
+
+        function nodeLabel(node) {
+            let flags = [];
+
+            if (node.entry) flags.push("entry");
+            if (node.return) flags.push("return");
+
+            const flagString =
+                flags.length > 0
+                    ? "\\n(" + flags.join(", ") + ")"
+                    : "";
+
+            return node.id + "\\n" + node.meth + flagString;
+        }
+
+        function nodeColor(node) {
+            if (node.entry && node.return) {
+                return { background: "#D6D8FF" };
+            }
+
+            if (node.entry) {
+                return { background: "#FFF3CD" };
+            }
+
+            if (node.return) {
+                return { background: "#F8D7DA" };
+            }
+
+            return { background: "#E0F7FA" };
+        }
+
+        function visualizeFlowgraph(n) {
+            try {
+                const flowgraph = automataData.flowgraph[n];
+                if (!flowgraph) return;
+
+                const containerId = "network-flowgraph-" + n;
+                createNetworkContainer(
+                    "flowgraph-container",
+                    containerId,
+                    "Flowgraph " + n
+                );
+
+                const nodes = [];
+                const edges = [];
+
+                flowgraph.nodes.forEach(node => {
+                    nodes.push({
+                        id: node.id,
+                        label: nodeLabel(node),
+                        color: nodeColor(node),
+                        borderWidth: node.entry || node.return ? 3 : 1,
+                        borderWidthSelected: 3,
+                        shape: "box"
+                    });
+                });
+
+                flowgraph.transitions.forEach(t => {
+                    edges.push({
+                        from: t.from,
+                        to: t.to,
+                        label: t.label,
+                        arrows: "to",
+                        font: {
+                            align: "middle"
+                        }
+                    });
+                });
+
+                const container = document.getElementById(containerId);
+
+                const data = {
+                    nodes: new vis.DataSet(nodes),
+                    edges: new vis.DataSet(edges)
+                };
+
+                const options = {
+                    layout: {
+                        hierarchical: false
+                    },
+                    physics: {
+                        enabled: true,
+                        stabilization: true
+                    },
+                    edges: {
+                        smooth: {
+                            type: "dynamic"
+                        }
+                    },
+                    nodes: {
+                        font: {
+                            size: 15
+                        },
+                        margin: 10
+                    }
+                };
+
+                new vis.Network(container, data, options);
+
+            } catch (e) {
+                alert("Error parsing Flowgraph " + n + ": " + e.message);
+            }
+        }
+
+        function addLegend() {
+            const dfaContainer = document.getElementById("dfa-container");
+
+            const dfaLegend = document.createElement("div");
+            dfaLegend.className = "legend";
+            dfaLegend.innerHTML = `
+                <div class="legend-item">
+                    <span class="legend-box initial"></span>
+                    Initial state
+                </div>
+                <div class="legend-item">
+                    <span class="legend-box normal"></span>
+                    Normal state
+                </div>
+                <div class="legend-item">
+                    <strong>Thick border</strong>: final state
+                </div>
+            `;
+
+            dfaContainer.appendChild(dfaLegend);
+
+            const flowgraphContainer = document.getElementById("flowgraph-container");
+
+            const fgLegend = document.createElement("div");
+            fgLegend.className = "legend";
+            fgLegend.innerHTML = `
+                <div class="legend-item">
+                    <span class="legend-box entry"></span>
+                    Entry node
+                </div>
+                <div class="legend-item">
+                    <span class="legend-box return"></span>
+                    Return node
+                </div>
+                <div class="legend-item">
+                    <span class="legend-box entry-return"></span>
+                    Entry and return node
+                </div>
+                <div class="legend-item">
+                    <span class="legend-box normal"></span>
+                    Normal node
+                </div>
+            `;
+
+            flowgraphContainer.appendChild(fgLegend);
+        }
+
+        window.onload = async function () {
+            await loadAllAutomata();
+
+            addLegend();
+
+            for (let i = 0; i < automataData.dfa.length; i++) {
+                visualizeDFA(i);
+            }
+
+            for (let i = 0; i < automataData.flowgraph.length; i++) {
+                visualizeFlowgraph(i);
+            }
+        };
+    </script>
+
+</body>
+
+</html>

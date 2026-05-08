@@ -1,0 +1,23 @@
+[
+  {
+    "type": "flowgraph",
+    "methods": ["main", "foo"],
+    "nodes": [
+      {
+        "id": 0,
+        "entry": true,
+        "return": false,
+        "meth": "main"
+      },
+      {
+        "id": 1,
+        "entry": false,
+        "return": true,
+        "meth": "main"
+      }
+    ],
+    "transitions": [
+      { "from": 0, "to": 1, "label": "foo" }
+    ]
+  }
+]

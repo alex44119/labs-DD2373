@@ -1,0 +1,12 @@
+[{
+    "type": "dfa",
+    "states": [0, 1, 2],
+    "alphabet": ["foo", "bar"],
+    "transitions": [
+      { "from": 0, "to": 1, "label": "foo" },
+      { "from": 1, "to": 2, "label": "bar" }
+    ],
+    "initial": 0,
+    "final": [2]
+  }
+]
