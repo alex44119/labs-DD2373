@@ -24,6 +24,12 @@ Extension VSCode : [https://marketplace.visualstudio.com/items?itemName=ocamllab
 
 ## How to execute the code ?
 
+### The main code (the one that solves the lab)
+
+```bash
+dune exec ./main.exe
+```
+
 ### Compilation
 
 ```bash
