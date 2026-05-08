@@ -10,9 +10,22 @@ type meth = string
 (* Definition of Deterministic Finite Automata*)
 type dfa = 
   {
-    nb_states : state; 
+    nb_states : int; 
     alphabet : meth list;
     delta : meth list array array; (* Entries of this matrix are state * state *)
     initial : state;
     final : state list
+  }
+
+(* DFA Complement *)
+let final_states_comp (final : state list) (nb_states : int) : state list =
+  List.filter (fun x -> not (List.mem x final)) (List.init nb_states (fun x->x))
+
+let dfa_comp (d : dfa) : dfa = 
+  {
+    nb_states = d.nb_states; 
+    alphabet = d.alphabet; 
+    delta = d.delta; 
+    initial = d.initial; 
+    final = final_states_comp d.final d.nb_states
   }
