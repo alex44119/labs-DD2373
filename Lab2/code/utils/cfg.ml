@@ -5,11 +5,11 @@
 open Dfa
 open Flowgraph
 
-type x_var = Node of node | Method of meth
+type x_var = Node of node | Terminal of meth
 
 type variable = Start | Tuple of state * x_var * state
 
-type alpha = Var of variable | Method of meth
+type alpha = Var of variable | Terminal of meth
 
 type sentential_form = alpha list
 
@@ -19,4 +19,3 @@ type cfg =
     terminals : meth list;
     productions : variable -> sentential_form list
   }
-

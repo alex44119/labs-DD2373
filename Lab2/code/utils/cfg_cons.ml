@@ -20,7 +20,7 @@ let rec call_edges_to_prod (d : dfa) (fg :flowgraph) (qa : state) (qd : state) (
 
         for k=0 to (d.nb_states - 1) do 
           for l=0 to (d.nb_states - 1) do
-            res := [Var(Tuple(qa, Method(hd), k)); Var(Tuple(k, Node(vk), l)); Var(Tuple(l, Node(vj), qd))] :: !res
+            res := [Var(Tuple(qa, Terminal(hd), k)); Var(Tuple(k, Node(vk), l)); Var(Tuple(l, Node(vj), qd))] :: !res
           done
         done;
 
@@ -48,13 +48,13 @@ let prod_cfg (d : dfa) (fg : flowgraph) (v : variable) : sentential_form list =
         done;
 
         if vi.return then 
-          (res := [Method("eps")] :: !res);
+          (res := [Terminal("eps")] :: !res);
 
         !res
 
-  | Tuple(qa, Method(met), qb) ->
+  | Tuple(qa, Terminal(met), qb) ->
         if (List.exists (String.equal met) d.delta.(qa).(qb)) then 
-          [[Method(met)]]
+          [[Terminal(met)]]
         else 
           [];;
 
@@ -70,7 +70,7 @@ let var_cfg (d : dfa) (fg : flowgraph) : variable list =
       done;
 
       for k=0 to List.length d.alphabet do 
-        res := Tuple(i, Method(List.nth d.alphabet k), j) :: !res
+        res := Tuple(i, Terminal(List.nth d.alphabet k), j) :: !res
       done
     done
   done;
