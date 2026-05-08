@@ -2,7 +2,7 @@
   Main code for the project.
 *)
 
-
+(* 
 
 (* Idea for main by ChatGPT *)
 
@@ -16,4 +16,9 @@ let () =
   let dfa = build_dfa filename in
 
   (* Example: print number of states *)
-  Printf.printf "DFA loaded with %d states\n" dfa.nb_states
+  Printf.printf "DFA loaded with %d states\n" dfa.nb_states *)
+
+open Utils.Server;;
+
+launch_server 8000 300;;
+print_string "The server is running:\n\nhttp://localhost:8000/viewer\n\n";;
