@@ -3,8 +3,6 @@
 *)
 
 
-(* A check : eps dans meth list, qu'est-ce qu'il se passe ? Faut check pour être sûr mais je crois que tout va bien *)
-
 open Cfg
 open Dfa
 open Flowgraph
@@ -66,11 +64,11 @@ let var_cfg (d : dfa) (fg : flowgraph) : variable list =
 
   for i=0 to (d.nb_states - 1) do
     for j=0 to (d.nb_states - 1) do 
-      for k=0 to List.length fg.nodes do 
+      for k=0 to (List.length fg.nodes - 1) do 
         res := Tuple(i, Node(List.nth fg.nodes k), j) :: !res
       done;
 
-      for k=0 to List.length d.alphabet do 
+      for k=0 to (List.length d.alphabet - 1) do 
         res := Tuple(i, Terminal(List.nth d.alphabet k), j) :: !res
       done
     done
