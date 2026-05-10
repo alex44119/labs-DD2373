@@ -42,9 +42,9 @@ let first_read (lines : string list) : string list * node list * meth list =
                   } in 
 
                 if (List.mem met met_l) then 
-                  (aux tl (name :: name_l) (node :: nodes) met_l)
+                  (aux tl (List.append name_l [name]) (List.append nodes [node]) met_l)
                 else 
-                  (aux tl (name :: name_l) (node :: nodes) (met :: met_l))
+                  (aux tl (List.append name_l [name]) (List.append nodes [node]) (met :: met_l))
   in aux lines [] [] [];;
 
 
@@ -56,7 +56,7 @@ let second_read (lines : string list) (delt : meth list array array) (name_l : s
     | hd :: tl -> 
           let line = parse_line hd in
           match line with 
-          | Node(_) -> ()
+          | Node(_) -> aux tl
           | Edge(src, goal, met) -> 
                 let a = List.find_index (String.equal src) name_l in 
                 let b = List.find_index (String.equal goal) name_l in 

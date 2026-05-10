@@ -15,6 +15,7 @@ let rec call_edges_to_prod (d : dfa) (fg :flowgraph) (qa : state) (qd : state) (
   match methods with 
   | [] -> ()
   | hd :: tl when String.equal hd "eps" -> call_edges_to_prod d fg qa qd vj tl res
+  | hd :: tl when not (List.mem hd d.alphabet) -> call_edges_to_prod d fg qa qd vj tl res
   | hd :: tl -> 
         let vk = get_entry_node fg hd in 
 

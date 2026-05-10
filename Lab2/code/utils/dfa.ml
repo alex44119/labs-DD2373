@@ -29,3 +29,15 @@ let dfa_comp (d : dfa) : dfa =
     initial = d.initial; 
     final = final_states_comp d.final d.nb_states
   }
+
+(* Useful function for testing *)
+let print_dfa (d : dfa) : unit = 
+  print_int d.nb_states;
+  print_endline "";
+  List.iter print_string d.alphabet;
+  print_endline "";
+  List.iter print_string d.delta.(2).(2);
+  print_endline "";
+  print_int d.initial;
+  print_endline "";
+  List.iter print_int d.final;; 

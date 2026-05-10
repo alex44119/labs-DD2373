@@ -67,28 +67,26 @@ let first_read (lines : string list) : (meth list * meth list * meth * meth list
 
           let res_state = 
             if (not (List.mem line.src state_l)) then 
-              (if (not (List.mem line.goal state_l)) then 
-                (line.src :: line.goal :: state_l)
-              else
-                (line.src :: state_l))
+              (line.src ::  state_l)
             else
-              (if (not (List.mem line.goal state_l)) then 
-                (line.goal :: state_l)
-              else
-                (state_l))
+              (state_l)
+          in let res_state = 
+            if (not (List.mem line.goal res_state)) then 
+              (line.goal ::  res_state)
+            else
+              (res_state)
           in
 
           let res_fin = 
             if (line.src_fin && not (List.mem line.src fin_l)) then 
-              (if (line.goal_fin && not (List.mem line.goal fin_l)) then 
-                (line.src :: line.goal :: fin_l)
-              else
-                (line.src :: fin_l))
+                (line.src :: fin_l)
             else
-              (if (line.goal_fin && not (List.mem line.goal fin_l)) then 
-                (line.goal :: fin_l)
-              else
-                (fin_l))
+                (fin_l)
+          in let res_fin = 
+            if (line.goal_fin && not (List.mem line.goal res_fin)) then 
+                (line.goal :: res_fin)
+            else
+                (res_fin)
           in
 
           let res_init = 
