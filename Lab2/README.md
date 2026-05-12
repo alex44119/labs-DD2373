@@ -24,6 +24,14 @@ Extension VSCode : [https://marketplace.visualstudio.com/items?itemName=ocamllab
 
 ## How to execute the code ?
 
+Run : 
+
+```bash
+dune exec ./main.exe testcases/Vote/Vote_v.spec testcases/Vote/Vote_ne.cfg
+```
+
+This is an example !
+
 ### The main code (the one that solves the lab)
 
 ```bash
