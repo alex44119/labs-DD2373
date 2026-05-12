@@ -50,9 +50,21 @@ code
 ├── dune
 ├── dune-project
 ├── main.ml
-├── testcases
-│   └── EvenOdd
-│   └── Simple
-│   └── Vote
-└── 
+├── testcases/[...]
+├── utils
+│   ├── cfg_cons.ml
+│   ├── cfg_emptiness.ml
+│   ├── cfg.ml
+│   ├── dfa_parser.ml
+│   ├── dfa.ml
+│   ├── dune
+│   ├── flowgraph_parser.ml
+│   ├── flowgraph.ml
+│   ├── server.ml
+│   └── viewer.ml
+└── viewer
+    ├── dfa.json
+    ├── flowgraph.json
+    ├── index.html
+    └── style.css
 ```
