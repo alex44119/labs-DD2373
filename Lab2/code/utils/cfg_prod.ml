@@ -12,8 +12,8 @@ open Flowgraph
 let rec call_edges_to_prod (d : dfa) (fg :flowgraph) (qa : state) (qd : state) (vj : node) (methods : meth list) (res : sentential_form list ref) : unit = 
   match methods with 
   | [] -> ()
-  | hd :: tl when String.equal hd "eps" -> call_edges_to_prod d fg qa qd vj tl res
-  | hd :: tl when not (List.mem hd d.alphabet) -> call_edges_to_prod d fg qa qd vj tl res
+  | hd :: tl when String.equal hd "eps" -> res := [Var(Tuple(qa, Node(vj), qd))] :: !res; call_edges_to_prod d fg qa qd vj tl res
+  | hd :: tl when not (List.mem hd d.alphabet) -> res := [Var(Tuple(qa, Node(vj), qd))] :: !res; call_edges_to_prod d fg qa qd vj tl res
   | hd :: tl -> 
         let vk = get_entry_node fg hd in 
 
@@ -36,11 +36,6 @@ let prod_cfg (d : dfa) (fg : flowgraph) (v : variable) : sentential_form list =
   | Tuple(qa, Node(vi), qb) ->
         let res = ref [] in 
         let n = List.length fg.nodes in 
-
-        for vj=0 to (n-1) do 
-          if List.exists (String.equal "eps") fg.edge_func.(vi.id).(vj) then 
-            (res := [Var(Tuple(qa, Node(List.nth fg.nodes vj), qb))] :: !res)
-        done;
 
         for vj=0 to (n-1) do 
           call_edges_to_prod d fg qa qb (List.nth fg.nodes vj) fg.edge_func.(vi.id).(vj) res
