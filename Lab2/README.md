@@ -27,7 +27,13 @@ Extension VSCode : [https://marketplace.visualstudio.com/items?itemName=ocamllab
 ### The main code (the one that solves the lab)
 
 ```bash
-dune exec ./main.exe
+dune exec ./main.exe "testcases/Simple/simple.spec" "testcases/Simple/simple.cfg"
+```
+```bash
+dune exec ./main.exe "testcases/EvenOdd/EvenOdd1b.spec" "testcases/EvenOdd/EvenOdd.cfg"
+```
+```bash
+dune exec ./main.exe "testcases/EvenOdd/EvenOdd1a.spec" "testcases/EvenOdd/EvenOdd.cfg"
 ```
 
 ### Compilation
