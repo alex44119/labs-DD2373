@@ -1,3 +1,3 @@
 (library
  (name utils)
- (modules dfa dfa_parser flowgraph flowgraph_parser cfg cfg_cons cfg_emptiness viewer server))
+ (modules dfa dfa_parser flowgraph flowgraph_parser cfg cfg_prod cfg_emptiness viewer server))

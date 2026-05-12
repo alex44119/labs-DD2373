@@ -80,7 +80,7 @@ let read_lines filename =
 
 
 (* Returns the Flow Graph written on the input file *)
-let build_fg filename : flowgraph =
+let build_fg (filename:string) : flowgraph =
   let lines = read_lines filename in
 
   let name_l, nodes, met_l = first_read lines in 

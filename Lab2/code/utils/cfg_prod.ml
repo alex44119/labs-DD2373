@@ -1,5 +1,5 @@
 (*
-  cfg_cons.ml --- Functions creating the CFG from a FG and a specification DFA
+  cfg_prod.ml --- Functions creating the CFG from a FG and a specification DFA
 *)
 
 
@@ -76,7 +76,7 @@ let var_cfg (d : dfa) (fg : flowgraph) : variable list =
 
   !res;;
 
-let cfg_cons (d : dfa) (fg : flowgraph) : cfg = 
+let cfg_prod (d : dfa) (fg : flowgraph) : cfg = 
   {
     variables = var_cfg d fg;
     terminals = d.alphabet;
