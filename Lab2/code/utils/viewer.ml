@@ -187,19 +187,19 @@ let flowgraph_viewer (fgs : flowgraph list) : json =
 (* ---------- Store ---------- *)
 
 let store_dfa (d : dfa) : unit =
-  write "dfa.json" (dfa_viewer [d])
+  write "viewer/dfa.json" (dfa_viewer [d])
 
 let store_dfas (ds : dfa list) : unit =
-  write "dfa.json" (dfa_viewer ds)
+  write "viewer/dfa.json" (dfa_viewer ds)
 
 let store_flowgraph (fg : flowgraph) : unit =
-  write "flowgraph.json" (flowgraph_viewer [fg])
+  write "viewer/flowgraph.json" (flowgraph_viewer [fg])
 
 let store_flowgraphs (fgs : flowgraph list) : unit =
-  write "flowgraph.json" (flowgraph_viewer fgs)
+  write "viewer/flowgraph.json" (flowgraph_viewer fgs)
 
 
-(* ---------- Pretty-printing helpers ---------- *)
+(* ---------- CFG Pretty-printing helpers ---------- *)
 
 let string_of_x_var (x : x_var) : string =
   match x with
@@ -208,7 +208,7 @@ let string_of_x_var (x : x_var) : string =
 
 let string_of_variable (v : variable) : string =
   match v with
-  | Start -> "S"
+  | Start -> "Start"
   | Tuple (p, x, q) ->
       Printf.sprintf "(%d, %s, %d)"
         p
@@ -262,8 +262,8 @@ let fresh_variable_name (i : int) : string =
 let renamed_variable_table (g : cfg) : (variable, string) Hashtbl.t =
   let table = Hashtbl.create 32 in
 
-  (* Start is always S *)
-  Hashtbl.add table Start "S";
+  (* Start is always Start *)
+  Hashtbl.add table Start "Start";
 
   let counter = ref 0 in
 

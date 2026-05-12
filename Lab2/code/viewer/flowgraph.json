@@ -1,23 +1,61 @@
-[
-  {
-    "type": "flowgraph",
-    "methods": ["main", "foo"],
-    "nodes": [
-      {
-        "id": 0,
-        "entry": true,
-        "return": false,
-        "meth": "main"
-      },
-      {
-        "id": 1,
-        "entry": false,
-        "return": true,
-        "meth": "main"
-      }
-    ],
-    "transitions": [
-      { "from": 0, "to": 1, "label": "foo" }
-    ]
-  }
-]
+[{
+        "type": "flowgraph",
+        "methods": ["odd", "even", "init", "main"],
+        "nodes": [{
+      "id": 0,
+      "entry": true,
+      "return": false,
+      "meth": "main"
+    }, {
+      "id": 1,
+      "entry": false,
+      "return": false,
+      "meth": "main"
+    }, {
+      "id": 2,
+      "entry": false,
+      "return": true,
+      "meth": "main"
+    }, {
+      "id": 3,
+      "entry": true,
+      "return": false,
+      "meth": "init"
+    }, {
+      "id": 4,
+      "entry": false,
+      "return": true,
+      "meth": "init"
+    }, {
+      "id": 5,
+      "entry": true,
+      "return": false,
+      "meth": "even"
+    }, {
+      "id": 6,
+      "entry": false,
+      "return": true,
+      "meth": "even"
+    }, {
+      "id": 7,
+      "entry": false,
+      "return": true,
+      "meth": "even"
+    }, {
+      "id": 8,
+      "entry": true,
+      "return": false,
+      "meth": "odd"
+    }, {
+      "id": 9,
+      "entry": false,
+      "return": true,
+      "meth": "odd"
+    }, {
+      "id": 10,
+      "entry": false,
+      "return": true,
+      "meth": "odd"
+    }],
+        "transitions": [{ "from": 5, "to": 7, "label": "odd" }, { "from": 8, "to": 9, "label": "eps" }, { "from": 1, "to": 2, "label": "even" }, { "from": 0, "to": 1, "label": "init" }, { "from": 5, "to": 6, "label": "eps" }, { "from": 8, "to": 10, "label": "even" }, { "from": 3, "to": 4, "label": "eps" }]
+      }]

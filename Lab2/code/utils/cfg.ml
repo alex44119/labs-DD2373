@@ -20,8 +20,6 @@ type cfg =
     productions : variable -> sentential_form list
   }
 
-
-
   (* Useful functions for testing *)
 
 let print_variable (v : variable) : unit = 
