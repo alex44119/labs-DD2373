@@ -29,6 +29,9 @@ Run :
 ```bash
 dune exec ./main.exe testcases/Vote/Vote_v.spec testcases/Vote/Vote_ne.cfg
 ```
+```bash
+dune exec ./main.exe testcases/Vote/Vote_gv.spec testcases/Vote/Vote_ne.cfg
+```
 
 This is an example !
 

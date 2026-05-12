@@ -1,8 +1,8 @@
 [{
         "type": "dfa",
-        "states": [0, 1, 2, 3],
-        "alphabet": ["init", "odd", "even", "eps"],
-        "transitions": [{ "from": 2, "to": 1, "label": "even" }, { "from": 3, "to": 3, "label": "eps, init" }, { "from": 1, "to": 1, "label": "eps, even, init, odd" }, { "from": 0, "to": 2, "label": "even" }, { "from": 2, "to": 0, "label": "odd" }, { "from": 0, "to": 1, "label": "odd" }, { "from": 0, "to": 0, "label": "eps, init" }, { "from": 3, "to": 0, "label": "odd" }, { "from": 2, "to": 2, "label": "eps, init" }, { "from": 3, "to": 2, "label": "even" }],
-        "initial": 3,
-        "final": [1]
+        "states": [0, 1, 2],
+        "alphabet": ["getVote", "vote", "validate", "init", "main", "submit", "eps"],
+        "transitions": [{ "from": 2, "to": 1, "label": "vote" }, { "from": 1, "to": 1, "label": "eps, getVote, init, main, submit, validate, vote" }, { "from": 2, "to": 0, "label": "getVote" }, { "from": 0, "to": 0, "label": "eps, getVote, init, main, submit, validate, vote" }, { "from": 2, "to": 2, "label": "eps, init, main, submit, validate" }],
+        "initial": 2,
+        "final": [0, 2]
       }]

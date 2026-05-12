@@ -2,7 +2,6 @@
   (name main)
   (libraries utils))
 
-
 (executable
   (name tests)
-  (libraries utils))
+  (libraries utils unix))
