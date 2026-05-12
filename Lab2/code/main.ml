@@ -27,9 +27,9 @@ let cfg = cfg_prod comp_dfa fg;;
 (* Test if the CFG is empty *)
 
 (* Print and show *)
-store_dfa dfa;;
+store_dfas [dfa;comp_dfa];;
 store_flowgraph fg;;
-print_renamed_cfg cfg;;
+print_cfg cfg;;
 
 let counter_example = find_counter_example cfg;;
 match counter_example with
