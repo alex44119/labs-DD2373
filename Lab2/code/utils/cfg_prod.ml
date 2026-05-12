@@ -46,7 +46,7 @@ let prod_cfg (d : dfa) (fg : flowgraph) (v : variable) : sentential_form list =
           call_edges_to_prod d fg qa qb (List.nth fg.nodes vj) fg.edge_func.(vi.id).(vj) res
         done;
 
-        if vi.return then 
+        if vi.return && qa = qb then 
           (res := [Terminal("eps")] :: !res);
 
         !res

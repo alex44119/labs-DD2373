@@ -1,8 +1,8 @@
 [{
         "type": "dfa",
         "states": [0, 1, 2],
-        "alphabet": ["getVote", "vote", "validate", "init", "main", "submit", "eps"],
-        "transitions": [{ "from": 2, "to": 1, "label": "vote" }, { "from": 1, "to": 1, "label": "eps, getVote, init, main, submit, validate, vote" }, { "from": 2, "to": 0, "label": "getVote" }, { "from": 0, "to": 0, "label": "eps, getVote, init, main, submit, validate, vote" }, { "from": 2, "to": 2, "label": "eps, init, main, submit, validate" }],
+        "alphabet": ["main", "a", "eps"],
+        "transitions": [{ "from": 1, "to": 0, "label": "a, main" }, { "from": 2, "to": 1, "label": "a" }, { "from": 1, "to": 1, "label": "eps" }, { "from": 2, "to": 0, "label": "main" }, { "from": 0, "to": 0, "label": "a, eps, main" }, { "from": 2, "to": 2, "label": "eps" }],
         "initial": 2,
-        "final": [0, 2]
+        "final": [1, 2]
       }]
