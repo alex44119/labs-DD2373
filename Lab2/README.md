@@ -33,7 +33,11 @@ dune exec ./main.exe testcases/Vote/Vote_v.spec testcases/Vote/Vote_ne.cfg
 dune exec ./main.exe testcases/Vote/Vote_gv.spec testcases/Vote/Vote_ne.cfg
 ```
 
-This is an example !
+### Own case :
+
+```bash
+OCAMLRUNPARAM=b dune exec ./main.exe testcases/OwnCase/OwnCaseTrue.spec testcases/OwnCase/OwnCase.cfg
+```
 
 ### The main code (the one that solves the lab)
 
